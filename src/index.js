@@ -1,9 +1,11 @@
 const express = require("express")
 const mongoose = require('mongoose')
+const multer = require("multer")
 const app = express()
 const routes = require("./routes/route")
-
 app.use(express.json())
+
+app.use(multer().any())
 mongoose.connect('mongodb+srv://honeygautam0:nB8CYVJgUWjqHkgK@cluster0.jlfkfzw.mongodb.net/bonusPostAndComment',{
     useNewUrlParser:true
 })
@@ -12,7 +14,6 @@ mongoose.connect('mongodb+srv://honeygautam0:nB8CYVJgUWjqHkgK@cluster0.jlfkfzw.m
 .catch((err)=> console.log(err.message))
 
 app.use('/',routes)
-
 app.listen(3000, function(){
     console.log("server is connected")
 })

@@ -13,4 +13,10 @@ const postSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-})
+    comments:{
+        type:Number,
+        default:0
+    }
+},{timestamps:true})
+
+module.exports = mongoose.model('post',postSchema)
