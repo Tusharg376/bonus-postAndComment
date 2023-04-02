@@ -1,19 +1,29 @@
 const userModel = require('../models/userModel')
+const jwt = require('jsonwebtoken')
 
-const createUser = async function(req,res){
-   try {
-     let data = req.body
-     if(!data.name || !data.title || !data.email || !data.phone || !data.password) return res.status(400).send({status:false,message:"credential missing"})
- 
-     let check = await userModel.findOne({$or:[{email:data.email},{phone:data.phone}]})
-     if(check.email == data.email) return res.status(400).send({status:false,message:"unique email is required"}) 
-     if(check.phone == data.phone) return res.status(400).send({status:false,message:"unique phone is required"}) 
-     
-     let final = await userModel.create(data)
-     res.status(200).send({status:true,data:final})
-   } catch (error) {
-        return res.status(500).send({status:false,message:error.message})
-   }
+const user = async function (req, res) {
+    try {
+        let user = await userModel.create(req.body)
+        return res.status(201).send({ status: true, data: user })
+    } catch (error) {
+        return res.status(500).send({ status: false, msg: error.message })
+    }
 }
 
-module.exports = {createUser}
+const login = async function(req,res){
+    try {
+        let data = req.body
+        if(!data.password) return res.status(400).send({status:false,msg:"password is required"})
+        if(!data.email) return res.status(400).send({status:false,msg:"email is required"})
+        let {password,email} = data
+        let findUser = await userModel.findOne({password:password,email:email})
+        if(!findUser) return res.status(400).send({status:false,msg:"Invalid Credentials"})
+        let payload = {userId:findUser._id.toString(),email:findUser.email}
+        let token = jwt.sign(payload,'secretKey')
+        return res.status(200).send({status:true,data:token})
+    } catch (error) {
+        return res.status(500).send({ status: false, msg: error.message })
+    }
+}
+
+module.exports = { user, login }

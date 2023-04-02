@@ -1,9 +1,34 @@
 const express = require('express')
-const router = express.Router()
-const {createUser} = require('../controllers/userController')
-const {createPost} = require('../controllers/postController')
+const { comment, updateComment, deleteComment, postReplay } = require('../controllers/commentController')
+const { post, updatePost, deletePost, getPost } = require('../controllers/postController')
+const { user, login } = require('../controllers/userController')
+const { objectIdCheck, validateToken, updateAuth } = require('../middlewares/authorization')
 
-router.post('/createUser', createUser)
-router.post('/createPost', createPost)
+const router = express.Router()
+
+router.get("/test_me", function (req, res) {
+    console.log("api is working")
+})
+
+router.post("/user", user)
+
+router.post("/login",login)
+
+router.post("/postImg", objectIdCheck, validateToken, post)
+
+router.get("/getPost", getPost)
+
+router.put("/updatePost", objectIdCheck, validateToken, updateAuth, updatePost)
+
+router.delete("/deletePost", objectIdCheck, validateToken, deletePost)
+
+router.post("/postComment", objectIdCheck, validateToken, comment)
+
+router.delete("/deleteComment", objectIdCheck, validateToken, deleteComment)
+
+router.put("/updateComment", objectIdCheck, validateToken, updateAuth, updateComment)
+
+router.post("/postReplay", objectIdCheck, postReplay)
+
 
 module.exports = router
